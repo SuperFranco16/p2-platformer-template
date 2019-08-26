@@ -607,7 +607,7 @@ game.addAttributes('Debug', {
         @attribute {Boolean} enabled
         @default false
     **/
-    enabled: true,
+    enabled: false,
     /**
         Enable fake touches.
         @attribute {Boolean} fakeTouch
@@ -731,7 +731,7 @@ game.addAttributes('Debug', {
         @attribute {Boolean} showBounds
         @default false
     **/
-    showBounds: true,
+    showBounds: false,
     /**
         Draw camera debug.
         @attribute {Boolean} showCamera
