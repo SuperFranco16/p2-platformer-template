@@ -107,6 +107,7 @@ game.module(
 		classname: 'playerclass',
 		speed: 3,
 		alive: true,
+                wall: false,
 		isOnGround: false,
 		init: function(x, y) {
 			var ths = this;
@@ -166,20 +167,33 @@ game.module(
 		},
 		OnWall: function() {
 			var ths = this;
+             if(this.wall){    
+             game.Timer.add(150, function() {
+              ths.wall= false;
+             });    
+            if (this.sprite.scale.x == -1) {
+                        //this.body.velocity[0] = 16; 
+                        this.body.position[0] = this.body.position[0] + 0.06;    
+                        }else{
+                        //this.body.velocity[0] = -16;  
+                        this.body.position[0] = this.body.position[0] - 0.06;    
+                        }
+                        this.body.velocity[1] = -6;
+     
+            }
+            
 			for (var i = 0; i < game.scene.world.narrowphase.contactEquations.length; i++) {
 				var c = game.scene.world.narrowphase.contactEquations[i];
 				if ((c.bodyA === this.body && c.bodyB.collisionGroup === game.Body.WallBody) || (c.bodyB === this.body && c.bodyA.collisionGroup === game.Body.WallBody)) {
-					if (game.scene.player.body.velocity[1] > 2 && game.keyboard.down('W')) {
-						if (this.sprite.scale.x == -1) {
-							this.body.position[0] = this.body.position[0] + 0.4;
-						} else {
-							this.body.position[0] = this.body.position[0] - 0.4;
-						}
-						this.body.velocity[1] = -7;
-					}
-					return true;
-				}
+                    if(!this.isOnGround){ 
+					  if (game.scene.player.body.velocity[1] > 2 && game.keyboard.down('W')) {
+                         this.wall = true;  
+					    return true;
+                       }
+                     }
+				  }
 			}
+ 
 			return false;
 		},
 		play: function(anim) {
@@ -203,6 +217,8 @@ game.module(
 		},
 		update: function() {
 			var ths = this;
+                  console.log(this.wall); 
+            
 			if (!this.sprite.onScreen()) {
 				this.destroy();
 			}
@@ -220,6 +236,8 @@ game.module(
 			this.sprite.position.y = this.body.position[1] * game.scene.world.ratio;
 			this.sprite.rotation = this.body.angle;
 			this.Onslope();
+            
+            if(!this.wall){   
 			if (game.keyboard.down('A')) {
 				this.body.velocity[0] = -this.speed;
 				this.sprite.scale.x = -1;
@@ -227,16 +245,17 @@ game.module(
 				this.body.velocity[0] = this.speed;
 				this.sprite.scale.x = 1;
 			} else {
-				this.body.velocity[0] = 0;
+			    this.body.velocity[0] = 0;
 			}
+            }    
 			//Jump
 			if (this.checkIfCanJump()) {
 				if (game.keyboard.down('W')) {
 					this.isonSlope = false;
 					this.body.velocity[1] = -6;
 				}
-			}
-		}
+			  }
+        },
 	});
 	game.createClass('Wall_Platform', {
 		init: function(x, y, width, height) {
